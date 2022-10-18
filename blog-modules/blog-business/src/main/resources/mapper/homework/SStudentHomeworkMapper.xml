@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blog.business.mapper.SStudentHomeworkMapper">
+
+    <resultMap type="SStudentHomework" id="SStudentHomeworkResult">
+        <result property="id"    column="id"    />
+        <result property="studentId"    column="student_id"    />
+        <result property="studentName"    column="student_name"    />
+        <result property="homeworkId"    column="homework_id"    />
+        <result property="homeworkTitle"    column="homework_title"    />
+        <result property="homeworkContent"    column="homework_content"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="homeworkScore"    column="homework_score"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="stuClassName"    column="stuclassname"    />
+        <result property="state"    column="state"    />
+        <association property="SHomework" javaType="SHomework">
+            <result property="id"    column="id"    />
+            <result property="teacherId"    column="teacher_id"    />
+            <result property="teacherName"    column="teacher_name"    />
+            <result property="startTime"    column="start_time"    />
+            <result property="endTime"    column="end_time"    />
+        </association>
+
+    </resultMap>
+
+    <sql id="selectSStudentHomeworkVo">
+        select s.*,h.* /*id, student_id, student_name, homework_id, homework_title, homework_content, create_time, update_time, homework_score, remark, create_by, update_by, stuClassName*/
+        from s_student_homework s left join s_homework h on h.id=s.homework_id
+    </sql>
+
+    <select id="selectSStudentHomeworkList" parameterType="SStudentHomework" resultMap="SStudentHomeworkResult">
+        <include refid="selectSStudentHomeworkVo"/>
+        <where>
+            <if test="studentName != null  and studentName != ''"> and student_name like concat('%', #{studentName}, '%')</if>
+            <if test="homeworkTitle != null  and homeworkTitle != ''"> and homework_title = #{homeworkTitle}</if>
+            <if test="state != null  and state != ''"> and state = #{state}</if>
+        </where>
+    </select>
+
+    <select id="selectSStudentHomeworkById" parameterType="Long" resultMap="SStudentHomeworkResult">
+        <include refid="selectSStudentHomeworkVo"/>
+        where s.id = #{id}
+    </select>
+
+    <insert id="insertSStudentHomework" parameterType="SStudentHomework" useGeneratedKeys="true" keyProperty="id">
+        insert into s_student_homework
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="studentId != null">student_id,</if>
+            <if test="studentName != null">student_name,</if>
+            <if test="homeworkId != null">homework_id,</if>
+            <if test="homeworkTitle != null">homework_title,</if>
+            <if test="homeworkContent != null">homework_content,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="homeworkScore != null">homework_score,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateBy != null">update_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="studentId != null">#{studentId},</if>
+            <if test="studentName != null">#{studentName},</if>
+            <if test="homeworkId != null">#{homeworkId},</if>
+            <if test="homeworkTitle != null">#{homeworkTitle},</if>
+            <if test="homeworkContent != null">#{homeworkContent},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="homeworkScore != null">#{homeworkScore},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSStudentHomework" parameterType="SStudentHomework">
+        update s_student_homework
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="studentId != null">student_id = #{studentId},</if>
+            <if test="studentName != null">student_name = #{studentName},</if>
+            <if test="homeworkId != null">homework_id = #{homeworkId},</if>
+            <if test="homeworkTitle != null">homework_title = #{homeworkTitle},</if>
+            <if test="homeworkContent != null">homework_content = #{homeworkContent},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="homeworkScore != null">homework_score = #{homeworkScore},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSStudentHomeworkById" parameterType="Long">
+        delete from s_student_homework where id = #{id}
+    </delete>
+
+    <delete id="deleteSStudentHomeworkByIds" parameterType="String">
+        delete from s_student_homework where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
